@@ -1,0 +1,13 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+
+</head>
+<body>
+	<h1>Liste des Comptes</h1>
+	<ul th:each="compte : ${comptes}"><li  th:text="'(' + ${compte.getIdentifiant()} + ') ' + ${compte.getSolde()}+' '+ ${compte.getDevise().getNomDevise()}+ ' Decouvert Autorise : '+ ${compte.getMinimumAutorise()}"/></ul>
+
+
+
+
+</body>
+</html>
