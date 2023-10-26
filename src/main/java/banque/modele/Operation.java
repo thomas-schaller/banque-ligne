@@ -2,46 +2,32 @@ package banque.modele;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Operation {
-    LocalDateTime dateOperation;
-    double montant;
+
 
 
     public Operation(double montant, Devise devise) {
         this.montant = montant;
         this.devise = devise;
     }
-
+    LocalDateTime dateOperation;
+    double montant;
     @Id @GeneratedValue
     long identifiant;
     @ManyToOne
     Devise devise;
 
-    public long getIdentifiant() {
-        return identifiant;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public TypeOperation getTypeOperation() {
-        return typeOperation;
-    }
-
-    public void setTypeOperation(TypeOperation typeOperation) {
-        this.typeOperation = typeOperation;
-    }
-
     @ManyToOne
     Client client;
+    @ManyToMany @OrderColumn(name = "identifiant")
+    List<Compte> comptes;
+
+    @Enumerated(EnumType.STRING)
+    TypeOperation typeOperation;
 
     public LocalDateTime getDateOperation() {
         return dateOperation;
@@ -67,10 +53,31 @@ public class Operation {
         this.devise = devise;
     }
 
-    @ManyToMany @OrderColumn(name = "identifiant")
-    List<Compte> comptes;
+    public List<Compte> getComptes() {
+        return comptes;
+    }
 
-    @Enumerated(EnumType.STRING)
-    TypeOperation typeOperation;
+    public void setComptes(List<Compte> comptes) {
+        this.comptes = comptes;
+    }
 
+    public long getIdentifiant() {
+        return identifiant;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public TypeOperation getTypeOperation() {
+        return typeOperation;
+    }
+
+    public void setTypeOperation(TypeOperation typeOperation) {
+        this.typeOperation = typeOperation;
+    }
 }

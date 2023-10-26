@@ -1,6 +1,7 @@
 package banque.modele;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Client {
@@ -39,19 +40,13 @@ public class Client {
         this.possede = possede;
     }
 
-    public Compte[] getaDestinataireAutorise() {
-        return aDestinataireAutorise;
-    }
 
-    public void setaDestinataireAutorise(Compte[] aDestinataireAutorise) {
-        this.aDestinataireAutorise = aDestinataireAutorise;
-    }
+
 
     @Id @GeneratedValue
     long identifiant;
-    @OneToMany @OrderColumn(name = "identifiant")
+    @OneToMany(mappedBy = "proprietaire") @OrderColumn(name = "identifiant")
     Compte[] possede;
-    @ManyToMany @OrderColumn(name = "identifiant")
-    Compte[] aDestinataireAutorise;
+
 
 }

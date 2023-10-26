@@ -13,9 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 
 @Slf4j
 @Configuration
@@ -38,15 +36,18 @@ public class LoadDatabase {
             compte1.setDevise(euro);
             compte1.setSolde(100);
             compte1.setMinimumAutorise(-100);
+            compte1.setProprietaire(client);
             depotCompte.save(compte1);
+
             Compte compte2 = new Compte();
             compte2.setDevise(euro);
             compte2.setSolde(500);
             compte2.setMinimumAutorise(-240);
+            compte2.setProprietaire(client);
             depotCompte.save(compte2);
             Compte [] comptesClient = {compte1,compte2};
+
             client.setPossede(comptesClient);
-            client.setaDestinataireAutorise(comptesClient);
             depotClient.save(client);
         };
     }

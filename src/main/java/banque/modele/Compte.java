@@ -8,12 +8,28 @@ public class Compte {
     double solde;
     double minimumAutorise;
 
+    public Client getProprietaire() {
+        return proprietaire;
+    }
+
+    public void setProprietaire(Client proprietaire) {
+        this.proprietaire = proprietaire;
+    }
+
+    @ManyToOne()
+    Client proprietaire;
+
     public double getSolde() {
         return solde;
     }
 
     public void setSolde(double solde) {
         this.solde = solde;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Compte && getIdentifiant() == ((Compte) obj).getIdentifiant();
     }
 
     public double getMinimumAutorise() {
@@ -36,6 +52,9 @@ public class Compte {
         return operations;
     }
 
+    public void setOperations(List<Operation> operations) {
+        this.operations = operations;
+    }
 
     public long getIdentifiant() {
         return identifiant;
@@ -45,6 +64,9 @@ public class Compte {
     long identifiant;
     @ManyToOne
     Devise devise;
+
+
+
     @ManyToMany(mappedBy = "comptes") @OrderColumn(name = "id")
     List<Operation> operations;
 }
