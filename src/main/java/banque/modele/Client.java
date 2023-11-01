@@ -5,8 +5,13 @@ import java.util.List;
 
 @Entity
 public class Client {
-    String nom;
-    String prenom;
+    @Id @GeneratedValue
+    private long identifiant;
+    private String nom;
+    private String prenom;
+
+    @OneToMany(mappedBy = "proprietaire") @OrderColumn(name = "identifiant")
+    private List<Compte> possede;
 
     public String getNom() {
         return nom;
@@ -32,21 +37,17 @@ public class Client {
         this.identifiant = identifiant;
     }
 
-    public Compte[] getPossede() {
+    public List<Compte> getPossede() {
         return possede;
     }
 
-    public void setPossede(Compte[] possede) {
+    public void setPossede(List<Compte> possede) {
         this.possede = possede;
     }
 
 
 
 
-    @Id @GeneratedValue
-    long identifiant;
-    @OneToMany(mappedBy = "proprietaire") @OrderColumn(name = "identifiant")
-    Compte[] possede;
 
 
 }

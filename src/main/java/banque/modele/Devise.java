@@ -7,6 +7,10 @@ import javax.persistence.Id;
 
 @Entity
 public class Devise {
+
+    @Id @GeneratedValue
+    private long identifiant;
+    private String nomDevise;
     public String getNomDevise() {
         return nomDevise;
     }
@@ -15,7 +19,6 @@ public class Devise {
         this.nomDevise = nomDevise;
     }
 
-    @Id @GeneratedValue
-    long identifiant;
-    private String nomDevise;
+
+
 }

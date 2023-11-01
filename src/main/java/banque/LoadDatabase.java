@@ -47,7 +47,7 @@ public class LoadDatabase {
             depotCompte.save(compte2);
             Compte [] comptesClient = {compte1,compte2};
 
-            client.setPossede(comptesClient);
+            client.setPossede(Arrays.asList(comptesClient));
             depotClient.save(client);
         };
     }

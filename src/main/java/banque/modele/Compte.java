@@ -2,22 +2,28 @@ package banque.modele;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Compte {
-    double solde;
-    double minimumAutorise;
+    private double solde;
+    private double minimumAutorise;
 
-    public Client getProprietaire() {
-        return proprietaire;
-    }
+
+    @Id @GeneratedValue
+    private long identifiant;
+    @ManyToOne
+    private Devise devise;
+
+    @ManyToMany(mappedBy = "comptes") @OrderColumn(name = "id")
+    private List<Operation> operations;
+
+    @ManyToOne()
+    private Client proprietaire;
 
     public void setProprietaire(Client proprietaire) {
         this.proprietaire = proprietaire;
     }
-
-    @ManyToOne()
-    Client proprietaire;
 
     public double getSolde() {
         return solde;
@@ -25,11 +31,6 @@ public class Compte {
 
     public void setSolde(double solde) {
         this.solde = solde;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Compte && getIdentifiant() == ((Compte) obj).getIdentifiant();
     }
 
     public double getMinimumAutorise() {
@@ -60,13 +61,19 @@ public class Compte {
         return identifiant;
     }
 
-    @Id @GeneratedValue
-    long identifiant;
-    @ManyToOne
-    Devise devise;
+    public Client getProprietaire() {
+        return proprietaire;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Compte && getIdentifiant() == ((Compte) obj).getIdentifiant();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identifiant);
+    }
 
 
-
-    @ManyToMany(mappedBy = "comptes") @OrderColumn(name = "id")
-    List<Operation> operations;
 }

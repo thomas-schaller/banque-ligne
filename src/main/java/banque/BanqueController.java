@@ -7,6 +7,7 @@ import banque.modele.Client;
 import banque.modele.Compte;
 import banque.repository.CompteRepository;
 import banque.repository.OperationRepository;
+import banque.services.BanqueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,60 +28,37 @@ import java.util.stream.Collectors;
 @Controller
 public class BanqueController {
 
-    private final ClientRepository clientService;
-    private final CompteRepository compteService;
-
-    private final OperationRepository operationService;
+private final BanqueService banqueService;
+private final static String nomTemplateListeCompte= "listeComptes";
 @Autowired
-    public BanqueController(ClientRepository clientService, CompteRepository compteService, OperationRepository operationService) {
-        this.clientService = clientService;
-        this.compteService = compteService;
-        this.operationService= operationService;
+    public BanqueController(BanqueService banqueService) {
+        this.banqueService = banqueService;
     }
 
-    @GetMapping("/{nomClient:.+}")
-    public String listCompte(Model model, @PathVariable String nomClient) throws IOException {
-        Client client = clientService.findByNom(nomClient);
-        if (client != null) {
-            model.addAttribute("comptes", client.getPossede());
-        }
-        else {
-            model.addAttribute("comptes", new Array [0] );
-        }
-
-        return "listeComptes";
+    @GetMapping("/{idClient:[0-9]+}")
+    public String listerCompte(Model model, @PathVariable long idClient) {
+        List<Compte> comptesClient = banqueService.listerCompte(idClient);
+        ajoutCompte2Modele(comptesClient,model);
+        return nomTemplateListeCompte;
     }
 
     @GetMapping("/{nomClient:.+}/{idCompte:[0-9]+}/depot/{montant:[0-9]+}")
     @ResponseBody
-    public Operation depot(Model model, @PathVariable String nomClient,@PathVariable long idCompte,@PathVariable double montant) throws IOException {
-        Client client = clientService.findByNom(nomClient);
-        Optional<Compte> compte = compteService.findById(idCompte);
-        Operation operation = null;
-        if (client != null && compte.isPresent() && Arrays.asList(client.getPossede()).contains(compte.get())) {
-            Compte com= compte.get();
-            List<Compte> listeCompte = new ArrayList<>();
-            listeCompte.add(com);
-            operation= new Operation(montant,compte.get().getDevise());
-            operation.setTypeOperation(TypeOperation.depot);
-            operation.setClient(client);
-            operation.setDateOperation( LocalDateTime.now());
-            //operation.setComptes(listeCompte);
-            operationService.save(operation);
-            List<Operation> listeOpe= com.getOperations();
-            if (listeOpe == null)
-            {
-                listeOpe = new ArrayList<>();
+    public Operation depot(Model model, @PathVariable String nomClient,@PathVariable long idCompte,@PathVariable double montant) {
 
-            }
-            listeOpe.add(operation);
-            com.setOperations(listeOpe);
-            com.setSolde(com.getSolde()+montant);
-            compteService.save(com);
+        return null;
+    }
 
-        }
+    @GetMapping("/{nomClient:.+}/{idCompte:[0-9]+}/retrait/{montant:[0-9]+}")
+    @ResponseBody
+    public Operation retrait(Model model, @PathVariable String nomClient,@PathVariable long idCompte,@PathVariable double montant) {
+
+        return null;
+    }
 
 
-        return operation;
+    private static void ajoutCompte2Modele(List<Compte> comptes,Model model)
+    {
+        model.addAttribute("comptes", comptes);
     }
 }

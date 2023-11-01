@@ -10,25 +10,30 @@ public class Operation {
 
 
 
+
+    private LocalDateTime dateOperation;
+    private double montant;
+    @Id @GeneratedValue
+    private long identifiant;
+    @ManyToOne
+    private Devise devise;
+
+    @ManyToOne
+    private Client client;
+    @ManyToMany @OrderColumn(name = "identifiant")
+    private List<Compte> comptes;
+
+    @Enumerated(EnumType.STRING)
+    private TypeOperation typeOperation;
+
     public Operation(double montant, Devise devise) {
         this.montant = montant;
         this.devise = devise;
     }
-    LocalDateTime dateOperation;
-    double montant;
-    @Id @GeneratedValue
-    long identifiant;
-    @ManyToOne
-    Devise devise;
 
-    @ManyToOne
-    Client client;
-    @ManyToMany @OrderColumn(name = "identifiant")
-    List<Compte> comptes;
-
-    @Enumerated(EnumType.STRING)
-    TypeOperation typeOperation;
-
+    public Operation(){
+        this.devise = new Devise();
+    }
     public LocalDateTime getDateOperation() {
         return dateOperation;
     }
