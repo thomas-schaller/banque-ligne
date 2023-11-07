@@ -80,13 +80,20 @@ public abstract class OperationDTO {
     public abstract void apply();
 
     public List<Operation> getOperations()
-    {   List<Operation> operations = new ArrayList<>();
+    {   
+        List<Operation> operations = new ArrayList<>();
         Operation operation = new Operation();
         operation.setMontant(this.getMontant());
         operation.setDevise(this.getCompte().getDevise());
         operation.setClient(this.getClient());
         operation.setCompte(this.getCompte());
+        operation.setDateOperation(this.getDateOperation());
         operations.add(operation);
         return operations;
+    }
+
+    protected void dateOperationSurDateCourante()
+    {
+         this.seDateOperation(LocalDateTime.now());
     }
 }
