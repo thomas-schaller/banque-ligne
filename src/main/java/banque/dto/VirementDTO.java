@@ -6,6 +6,9 @@ import banque.modele.TypeOperation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Un virement correspond à une operation de retrait d'un compte puis d'une operation de depot sur un autre compte
+ */
 public class VirementDTO extends OperationDTO{
     public VirementDTO() {
         setTypeOperation(TypeOperation.virement);
