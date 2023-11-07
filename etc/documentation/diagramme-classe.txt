@@ -4,11 +4,6 @@ class Client
 String nom
 String prenom
 long identifiant
-listerCompte() : Compte[]
-deposer(long identifiantCompte,double montant) : boolean
-retirer(long identifiantCompte,double montant) : boolean
-virer(long identifiantCompteOrigine,long identifiantCompteDestinataire,double montant) : boolean
-listerOperation(long identifiantCompte) : Operation[]
 }
 class Compte
 {
@@ -33,7 +28,7 @@ String nomTypeOperation
 Client "1" -- "*" Operation : effectue >
 Client *-- "*" Compte : possede >
 Client "*" -- "*" Compte : aDestinataireAutorisé >
-Compte "1..*" -- "*" Operation :s'applique sur <
+Compte "1" -- "*" Operation :s'applique sur <
 Compte "*" -- "1" Devise
 Devise "1" -- "*" Operation
 TypeOperation "1" -- "*" Operation
