@@ -2,14 +2,10 @@ package banque.modele;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Entity
-public class Operation {
-
-
-
+public abstract class Operation {
 
     private LocalDateTime dateOperation;
     private double montant;
@@ -20,8 +16,8 @@ public class Operation {
 
     @ManyToOne
     private Client client;
-    @ManyToMany @OrderColumn(name = "identifiant")
-    private List<Compte> comptes;
+    @ManyToOne
+    private Compte compte;
 
     @Enumerated(EnumType.STRING)
     private TypeOperation typeOperation;
@@ -58,12 +54,12 @@ public class Operation {
         this.devise = devise;
     }
 
-    public List<Compte> getComptes() {
-        return comptes;
+    public Compte getCompte() {
+        return compte;
     }
 
-    public void setComptes(List<Compte> comptes) {
-        this.comptes = comptes;
+    public void setCompte(Compte comptes) {
+        this.compte = comptes;
     }
 
     public long getIdentifiant() {
@@ -82,7 +78,9 @@ public class Operation {
         return typeOperation;
     }
 
-    public void setTypeOperation(TypeOperation typeOperation) {
+    protected void setTypeOperation(TypeOperation typeOperation) {
         this.typeOperation = typeOperation;
     }
+
+    public abstract void apply();
 }

@@ -1,14 +1,12 @@
 package banque.services;
 
-import banque.modele.Client;
-import banque.modele.Compte;
-import banque.modele.Operation;
-import banque.modele.TypeOperation;
+import banque.modele.*;
 import banque.repository.ClientRepository;
 import banque.repository.CompteRepository;
 import banque.repository.OperationRepository;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -36,55 +34,48 @@ public class BanqueService
         Client client = clientRepository.findById(idClient).orElseThrow();
         Compte compte = compteRepository.findById(idCompte).orElseThrow();
         Operation resultOperation = null;
-        if ( client.getPossede().contains(compte)) {;
-            List<Compte> listeCompte = new ArrayList<>();
-            listeCompte.add(compte);
-            resultOperation= new Operation(montant,compte.getDevise());
-            resultOperation.setTypeOperation(TypeOperation.depot);
+        if ( verifierAppartenanceCompteClient(client,compte)) {
+            // Creation et Initialisation Operation depot
+            resultOperation= new Depot();
+            resultOperation.setMontant(montant);
+            resultOperation.setDevise(compte.getDevise());
             resultOperation.setClient(client);
-            resultOperation.setDateOperation( LocalDateTime.now());
-            resultOperation.setComptes(listeCompte);
-            operationRepository.save(resultOperation);
-            List<Operation> listeOpe= compte.getOperations();
-            if (listeOpe == null)
-            {
-                listeOpe = new ArrayList<>();
+            resultOperation.setCompte(compte);
 
-            }
-            listeOpe.add(resultOperation);
-            compte.setOperations(listeOpe);
-            compte.setSolde(compte.getSolde()+montant);
+            // On applique l'opération ainsi créée
+            resultOperation.apply();
+
+            // on sauvegarde
+            operationRepository.save(resultOperation);
+
             compteRepository.save(compte);
 
         }
         return resultOperation;
     }
 
-    public Operation retrait(final String nomClient,final Long idCompte, final double montant)
+    public Operation retrait(final long idClient,final Long idCompte, final double montant)
     {
-        Client client = clientRepository.findByNom(nomClient);
-        Optional<Compte> compte = compteRepository.findById(idCompte);
+        Client client = clientRepository.findById(idClient).orElseThrow();
+        Compte compte = compteRepository.findById(idCompte).orElseThrow();
         Operation resultOperation = null;
-        if (client != null && compte.isPresent() && client.getPossede().contains(compte.get())) {
-            Compte com= compte.get();
-            if ( com.getMinimumAutorise() <= com.getSolde()-montant) {
-                List<Compte> listeCompte = new ArrayList<>();
-                listeCompte.add(com);
-                resultOperation = new Operation(montant, compte.get().getDevise());
-                resultOperation.setTypeOperation(TypeOperation.retrait);
-                resultOperation.setClient(client);
-                resultOperation.setDateOperation(LocalDateTime.now());
-                resultOperation.setComptes(listeCompte);
-                operationRepository.save(resultOperation);
-                List<Operation> listeOpe = com.getOperations();
-                if (listeOpe == null) {
-                    listeOpe = new ArrayList<>();
+        if ( verifierAppartenanceCompteClient(client,compte)) {
 
-                }
-                listeOpe.add(resultOperation);
-                com.setOperations(listeOpe);
-                com.setSolde(com.getSolde() - montant);
-                compteRepository.save(com);
+            if ( compte.getMinimumAutorise() <= compte.getSolde()-montant) {
+
+                //Creation Operation Retrait
+                resultOperation = new Retrait();
+                resultOperation.setMontant(montant);
+                resultOperation.setDevise(compte.getDevise());
+                resultOperation.setClient(client);
+                resultOperation.setCompte(compte);
+
+                //application de l'operation
+                resultOperation.apply();
+                //sauvegarde
+                operationRepository.save(resultOperation);
+
+                compteRepository.save(compte);
             }
         }
         return resultOperation;
@@ -93,38 +84,45 @@ public class BanqueService
     public Operation virer(final String nomClient,final Long idCompteOrigine, long idCompteDestinataire,final double montant)
     {
         Client client = clientRepository.findByNom(nomClient);
-        Optional<Compte> compteOri = compteRepository.findById(idCompteOrigine);
-        Optional<Compte> compteDesti = compteRepository.findById(idCompteDestinataire);
-        Operation resultOperation = null;
-        if (client != null && compteOri.isPresent() &&  compteDesti.isPresent() && client.getPossede().contains(compteOri.get()) && client.getPossede().contains(compteDesti.get()) ) {
-            Compte comOri= compteOri.get();
-            Compte comDesti= compteDesti.get();
-            if ( comOri.getMinimumAutorise() <= comOri.getSolde()-montant) {
-                List<Compte> listeCompte = new ArrayList<>();
-                listeCompte.add(comOri);
-                listeCompte.add(comDesti);
-                resultOperation = new Operation(montant, compteOri.get().getDevise());
-                resultOperation.setTypeOperation(TypeOperation.virement);
+        Compte compteOri = compteRepository.findById(idCompteOrigine).orElseThrow();
+        Compte compteDesti = compteRepository.findById(idCompteDestinataire).orElseThrow();
+        Virement resultOperation = null;
+        if (verifierAppartenanceCompteClient(client,compteOri) && verifierAppartenanceCompteClient(client,compteDesti)) {
+
+            if ( compteOri.getMinimumAutorise() <= compteOri.getSolde()-montant) {
+                //Creation Operation Virement
+                resultOperation = new Virement();
                 resultOperation.setClient(client);
                 resultOperation.setDateOperation(LocalDateTime.now());
-                resultOperation.setComptes(listeCompte);
-                operationRepository.save(resultOperation);
-                List<Operation> listeOpe = comOri.getOperations();
-                if (listeOpe == null) {
-                    listeOpe = new ArrayList<>();
+                resultOperation.setCompte(compteDesti);
 
-                }
-                listeOpe.add(resultOperation);
-                comOri.setOperations(listeOpe);
-                comOri.setSolde(comOri.getSolde() - montant);
-                compteRepository.save(comOri);
+                resultOperation.apply();
+
+                // sauvegarde
+                operationRepository.save(resultOperation);
+                compteRepository.save(compteOri);
             }
         }
         return resultOperation;
     }
 
-    public List<Operation> ListerOperationParCompte(String nomClient, long idCompte)
+    private boolean verifierAppartenanceCompteClient(Client client, Compte compte)
     {
-        return null;
+        return client.getPossede().contains(compte);
+    }
+    public List<Operation> ListerOperationParCompte(long  idClient, long idCompte)
+    {
+        Client client = clientRepository.findById(idClient).orElseThrow();
+        Compte compte = compteRepository.findById(idCompte).orElseThrow();
+        if ( verifierAppartenanceCompteClient(client,compte))
+        {
+            return compte.getOperations();
+        }
+        String messageErreur = "Le compte " +
+                compte.getIdentifiant() +
+                " n'appartient pas au client " +
+                client.getIdentifiant();
+        throw new InvalidParameterException(
+                messageErreur);
     }
 }
