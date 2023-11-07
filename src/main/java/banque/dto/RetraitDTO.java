@@ -1,17 +1,16 @@
-package banque.modele;
+package banque.dto;
+
+import banque.modele.Compte;
+import banque.modele.TypeOperation;
 
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-public class Retrait extends Operation{
+public class RetraitDTO extends OperationDTO {
 
-    public Retrait()
-    {
+    public RetraitDTO() {
         setTypeOperation(TypeOperation.retrait);
     }
-
 
     @Override
     public void apply() {
@@ -20,7 +19,7 @@ public class Retrait extends Operation{
         if (compte.getSolde()-getMontant() < compte.getMinimumAutorise())
         {
             compte.setSolde(compte.getSolde() - getMontant());
-            compte.getOperations().add(this);
+            compte.getOperations().addAll(getOperations());
         }
         else {
             throw new InvalidParameterException("Depassement du seuil minimum Autorisé :"+compte.getMinimumAutorise());

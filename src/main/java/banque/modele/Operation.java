@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-public abstract class Operation {
+public class Operation {
 
     private LocalDateTime dateOperation;
     private double montant;
@@ -82,5 +82,4 @@ public abstract class Operation {
         this.typeOperation = typeOperation;
     }
 
-    public abstract void apply();
 }

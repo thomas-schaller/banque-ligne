@@ -15,7 +15,7 @@ public class Compte {
     @ManyToOne
     private Devise devise;
 
-    @ManyToMany(mappedBy = "comptes") @OrderColumn(name = "id")
+    @OneToMany(mappedBy = "compte") @OrderColumn(name = "id")
     private List<Operation> operations;
 
     @ManyToOne()

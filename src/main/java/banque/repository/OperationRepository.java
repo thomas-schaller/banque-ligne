@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface OperationRepository extends JpaRepository<Operation,Long> {
     List<Operation> findByClient(Client client);
-    List<Operation> findByComptes(Compte compte);
+    List<Operation> findByCompte(Compte compte);
 }

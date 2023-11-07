@@ -1,10 +1,12 @@
 package banque;
 
+import banque.dto.OperationDTO;
 import banque.modele.Operation;
 
 import banque.modele.Compte;
 
 import banque.services.BanqueService;
+import banque.services.IBanqueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,32 +17,32 @@ import java.util.List;
 @Controller
 public class BanqueController {
 
-private final BanqueService banqueService;
+private final IBanqueService banqueService;
 private final static String nomTemplateListeCompte= "listeComptes";
 @Autowired
     public BanqueController(BanqueService banqueService) {
         this.banqueService = banqueService;
     }
 
-    @GetMapping("/{idClient:[0-9]+}")
+    @GetMapping("/comptes/{idClient:[0-9]+}")
     public String listerCompte(Model model, @PathVariable long idClient) {
         List<Compte> comptesClient = banqueService.listerCompte(idClient);
         ajoutCompte2Modele(comptesClient,model);
         return nomTemplateListeCompte;
     }
 
-    @GetMapping("/{idClient:[0-9]+}/idCompte:[0-9]+}/operations")
+    @GetMapping("/operations/{idClient:[0-9]+}/{idCompte:[0-9]+}")
     @ResponseBody
     public List<Operation> listerOperationsCompte(@PathVariable long idClient,@PathVariable long idCompte)
     {
-        return null;
+        return banqueService.ListerOperationParCompte(idClient, idCompte);
     }
 
-    @PostMapping("/{idClient:[0-9]+}/{idCompte:[0-9]+}")
+    @PostMapping("/operation/{idClient:[0-9]+}/{idCompte:[0-9]+}")
     @ResponseBody
-    public Operation appliquerOperation( @PathVariable long idClient,@PathVariable long idCompte,@RequestBody Operation operation) {
+    public void appliquerOperation( @PathVariable long idClient,@PathVariable long idCompte,@RequestBody OperationDTO operation) {
 
-        return null;
+        banqueService.applyOperation(idClient,idCompte,operation);
     }
 
 

@@ -1,9 +1,7 @@
 package banque;
 
 
-import banque.modele.Client;
-import banque.modele.Compte;
-import banque.modele.Devise;
+import banque.modele.*;
 import banque.repository.ClientRepository;
 import banque.repository.CompteRepository;
 import banque.repository.DeviseRepository;
@@ -45,10 +43,16 @@ public class LoadDatabase {
             compte2.setMinimumAutorise(-240);
             compte2.setProprietaire(client);
             depotCompte.save(compte2);
-            Compte [] comptesClient = {compte1,compte2};
 
-            client.setPossede(Arrays.asList(comptesClient));
-            depotClient.save(client);
+            Operation depot = new Operation();
+            depot.setMontant(200);
+            depot.setCompte(compte1);
+            depot.setDevise(euro);
+            depotOperation.save(depot);
+            List<Operation> operations = new ArrayList<>();
+            operations.add(depot);
+            compte1.setOperations(operations);
+            depotCompte.save(compte1);
         };
     }
 }

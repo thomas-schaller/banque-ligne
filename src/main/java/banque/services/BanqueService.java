@@ -1,5 +1,6 @@
 package banque.services;
 
+import banque.dto.OperationDTO;
 import banque.modele.*;
 import banque.repository.ClientRepository;
 import banque.repository.CompteRepository;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-public class BanqueService
+public class BanqueService implements IBanqueService
 {
     private final ClientRepository clientRepository ;
     private final CompteRepository compteRepository ;
@@ -29,87 +30,25 @@ public class BanqueService
         return client.getPossede();
     }
 
-    public Operation depot(final long idClient,final Long idCompte, final double montant)
+    public void applyOperation(final long idClient, final Long idCompte, OperationDTO newOperation)
     {
         Client client = clientRepository.findById(idClient).orElseThrow();
         Compte compte = compteRepository.findById(idCompte).orElseThrow();
-        Operation resultOperation = null;
-        if ( verifierAppartenanceCompteClient(client,compte)) {
-            // Creation et Initialisation Operation depot
-            resultOperation= new Depot();
-            resultOperation.setMontant(montant);
-            resultOperation.setDevise(compte.getDevise());
-            resultOperation.setClient(client);
-            resultOperation.setCompte(compte);
+        List<Operation> resultOperations = newOperation.getOperations();
+        if ( verifierAppartenanceCompteClient(client,compte) && verifierMontantAutorice(compte,newOperation)) {
 
-            // On applique l'opération ainsi créée
-            resultOperation.apply();
+            //application de l'operation
+            newOperation.apply();
 
-            // on sauvegarde
-            operationRepository.save(resultOperation);
-
-            compteRepository.save(compte);
-
-        }
-        return resultOperation;
-    }
-
-    public Operation retrait(final long idClient,final Long idCompte, final double montant)
-    {
-        Client client = clientRepository.findById(idClient).orElseThrow();
-        Compte compte = compteRepository.findById(idCompte).orElseThrow();
-        Operation resultOperation = null;
-        if ( verifierAppartenanceCompteClient(client,compte)) {
-
-            if ( compte.getMinimumAutorise() <= compte.getSolde()-montant) {
-
-                //Creation Operation Retrait
-                resultOperation = new Retrait();
-                resultOperation.setMontant(montant);
-                resultOperation.setDevise(compte.getDevise());
-                resultOperation.setClient(client);
-                resultOperation.setCompte(compte);
-
-                //application de l'operation
-                resultOperation.apply();
-                //sauvegarde
-                operationRepository.save(resultOperation);
-
+            //sauvegarde
+            for (Operation operation : resultOperations) {
+                operationRepository.save(operation);
                 compteRepository.save(compte);
             }
         }
-        return resultOperation;
+
     }
 
-    public Operation virer(final String nomClient,final Long idCompteOrigine, long idCompteDestinataire,final double montant)
-    {
-        Client client = clientRepository.findByNom(nomClient);
-        Compte compteOri = compteRepository.findById(idCompteOrigine).orElseThrow();
-        Compte compteDesti = compteRepository.findById(idCompteDestinataire).orElseThrow();
-        Virement resultOperation = null;
-        if (verifierAppartenanceCompteClient(client,compteOri) && verifierAppartenanceCompteClient(client,compteDesti)) {
-
-            if ( compteOri.getMinimumAutorise() <= compteOri.getSolde()-montant) {
-                //Creation Operation Virement
-                resultOperation = new Virement();
-                resultOperation.setClient(client);
-                resultOperation.setDateOperation(LocalDateTime.now());
-                resultOperation.setCompte(compteDesti);
-
-                resultOperation.apply();
-
-                // sauvegarde
-                operationRepository.save(resultOperation);
-                compteRepository.save(compteOri);
-            }
-        }
-        return resultOperation;
-    }
-
-    private boolean verifierAppartenanceCompteClient(Client client, Compte compte)
-    {
-        return client.getPossede().contains(compte);
-    }
     public List<Operation> ListerOperationParCompte(long  idClient, long idCompte)
     {
         Client client = clientRepository.findById(idClient).orElseThrow();
@@ -124,5 +63,15 @@ public class BanqueService
                 client.getIdentifiant();
         throw new InvalidParameterException(
                 messageErreur);
+    }
+
+    private boolean verifierAppartenanceCompteClient(Client client, Compte compte)
+    {
+        return client.getPossede().contains(compte);
+    }
+
+    private boolean verifierMontantAutorice(Compte compte, OperationDTO newOperation)
+    {
+        return compte.getMinimumAutorise() <= compte.getSolde()-newOperation.getMontant();
     }
 }
