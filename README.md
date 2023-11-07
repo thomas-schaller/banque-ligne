@@ -17,6 +17,8 @@ solde...).
 Si une opération de retrait ou virement fait dépasser le seuil du découvert,
 celle-ci est refusée.
 
+Un virement est une opération de retrait sur un compte et une opération de dépôt du même montant sur un autre compte.
+
 ## Diagramme de classes :
 
 ![Dagramme de Classe](http://www.plantuml.com/plantuml/png/RP1BJiGm38RtEONL3T98is2B41eqtRE02uI9Yopb4M872I4En3cu61xQb9RfflNZ-t_7Fh3O8ZLuS_AM6OwUC8hvC8zIABv0JA65kU0vyqbZSahHG5RPpoPD8Gkgz89mgJvx14xUOKi2HGert5T9XHXdbuUCnGgbg4Qz5GIddxzYKwSeozazlgd9wjbZIOdZB_7qdXSsIt3LKTwCDu3kkeFz7hfT1tCRRW270KzI4UuQk9keyG2AvCICRa6Sk_yXsoCBHIkM2avd-FvIpKHiZ-ShcxEdruh0jS1jezi45KsBZxzD6xDQUHivO7Gr-1y0)
