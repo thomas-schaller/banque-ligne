@@ -18,10 +18,10 @@ class BanqueServiceTest {
 
 
     @Autowired
-    private BanqueService banqueService;
+    private CompteService compteService;
     @Test
     void listerCompte() {
-        List<Compte> comptes =banqueService.listerCompte(2);
+        List<Compte> comptes =compteService.listerCompte(2);
         // etrangement j'obtiens des une liste avec des elements vides, a voir si il faudrait pas reporter dans le get de comptes
         while(comptes.remove(null))
         {
@@ -32,7 +32,7 @@ class BanqueServiceTest {
 
     @Test
     void listerOperationParCompte() {
-        List<Compte> comptes =banqueService.listerCompte(2);
+        List<Compte> comptes =compteService.listerCompte(2);
         // etrangement j'obtiens des une liste avec des elements vides, a voir si il faudrait pas reporter dans le get de comptes
         while(comptes.remove(null))
         {
