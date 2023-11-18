@@ -94,6 +94,6 @@ public abstract class OperationDTO {
 
     protected void dateOperationSurDateCourante()
     {
-         this.seDateOperation(LocalDateTime.now());
+         this.setDateOperation(LocalDateTime.now());
     }
 }
