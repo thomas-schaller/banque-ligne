@@ -2,14 +2,17 @@ package banque.modele;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Entity
 public class Operation {
 
+    @Column(nullable = false)
+    @Basic
     private LocalDateTime dateOperation;
     private double montant;
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long identifiant;
     @ManyToOne
     private Devise devise;
@@ -28,7 +31,7 @@ public class Operation {
     }
 
     public Operation(){
-        this.devise = new Devise();
+
     }
     public LocalDateTime getDateOperation() {
         return dateOperation;
@@ -78,8 +81,33 @@ public class Operation {
         return typeOperation;
     }
 
-    protected void setTypeOperation(TypeOperation typeOperation) {
+    public void setTypeOperation(TypeOperation typeOperation) {
         this.typeOperation = typeOperation;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Operation operation = (Operation) o;
+        return Double.compare(getMontant(), operation.getMontant()) == 0 && Objects.equals(getDateOperation(), operation.getDateOperation()) && Objects.equals(getDevise(), operation.getDevise()) && Objects.equals(getClient(), operation.getClient()) && Objects.equals(getCompte(), operation.getCompte()) && getTypeOperation() == operation.getTypeOperation();
+    }
+
+    @Override
+    public String toString() {
+        return "Operation{" +
+                "dateOperation=" + dateOperation +
+                ", montant=" + montant +
+                ", identifiant=" + identifiant +
+                ", devise=" + devise +
+                ", client=" + client +
+                ", compte=" + compte +
+                ", typeOperation=" + typeOperation +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDateOperation(), getMontant(), getDevise(), getClient(), getCompte(), getTypeOperation());
+    }
 }
