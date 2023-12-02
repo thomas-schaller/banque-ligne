@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 public class Client {
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private long identifiant;
 
     @Column(nullable = false)

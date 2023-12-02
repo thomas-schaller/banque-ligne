@@ -1,11 +1,10 @@
 package banque;
 
-import banque.dto.OperationDTO;
+import banque.comportement.OperationTraitement;
 import banque.modele.Operation;
 
 import banque.modele.Compte;
 
-import banque.services.CompteService;
 import banque.services.ICompteService;
 import banque.services.IOperationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ private final static String nomTemplateListeCompte= "listeComptes";
 
     @PostMapping("/operation/{idClient:[0-9]+}/{idCompte:[0-9]+}")
     @ResponseBody
-    public void appliquerOperation( @PathVariable long idClient,@PathVariable long idCompte,@RequestBody OperationDTO operation) {
+    public void appliquerOperation( @PathVariable long idClient,@PathVariable long idCompte,@RequestBody OperationTraitement operation) {
 
         operationService.applyOperation(idClient,idCompte,operation);
     }

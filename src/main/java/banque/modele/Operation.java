@@ -12,7 +12,7 @@ public class Operation {
     @Basic
     private LocalDateTime dateOperation;
     private double montant;
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long identifiant;
     @ManyToOne
     private Devise devise;

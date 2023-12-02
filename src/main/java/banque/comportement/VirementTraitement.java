@@ -1,4 +1,4 @@
-package banque.dto;
+package banque.comportement;
 
 import banque.modele.Operation;
 import banque.modele.TypeOperation;
@@ -9,26 +9,26 @@ import java.util.List;
 /**
  * Un virement correspond à une operation de retrait d'un compte puis d'une operation de depot sur un autre compte
  */
-public class VirementDTO extends OperationDTO{
-    public VirementDTO() {
+public class VirementTraitement extends OperationTraitement {
+    public VirementTraitement() {
         setTypeOperation(TypeOperation.virement);
     }
-    DepotDTO depot;
-    RetraitDTO retrait;
+    DepotTraitement depot;
+    RetraitTraitement retrait;
 
-    public DepotDTO getDepot() {
+    public DepotTraitement getDepot() {
         return depot;
     }
 
-    public void setDepot(DepotDTO depot) {
+    public void setDepot(DepotTraitement depot) {
         this.depot = depot;
     }
 
-    public RetraitDTO getRetrait() {
+    public RetraitTraitement getRetrait() {
         return retrait;
     }
 
-    public void setRetrait(RetraitDTO retrait) {
+    public void setRetrait(RetraitTraitement retrait) {
         this.retrait = retrait;
     }
 

@@ -1,10 +1,8 @@
 package banque.services;
 
-import banque.dto.OperationDTO;
-import banque.modele.Client;
+import banque.comportement.OperationTraitement;
 import banque.modele.Compte;
 import banque.modele.Operation;
-import banque.repository.ClientRepository;
 import banque.repository.CompteRepository;
 import banque.repository.OperationRepository;
 import org.springframework.stereotype.Service;
@@ -23,9 +21,8 @@ public class OperationService implements IOperationService{
         this.operationRepository = operationRepository;
         this.compteService= compteService;
     }
-    public void applyOperation(final long idClient, final Long idCompte, OperationDTO newOperation)
+    public void applyOperation(final long idClient, final Long idCompte, OperationTraitement newOperation)
     {
-        List<Operation> resultOperations = newOperation.getOperations();
         if ( !compteService.verifierAppartenanceCompteClient(idClient,idCompte) ) {
             String messageErreur = "Le compte " +
                     idCompte +
@@ -45,14 +42,13 @@ public class OperationService implements IOperationService{
         }
 
         Compte compte = compteRepository.findById(idCompte).orElseThrow();
+        newOperation.setCompte(compte);
         //application de l'operation
         newOperation.apply();
 
         //sauvegarde
-        for (Operation operation : resultOperations) {
-            operationRepository.save(operation);
-            compteRepository.save(compte);
-        }
+        operationRepository.saveAll(newOperation.getOperations());
+        compteRepository.save(compte);
     }
     public List<Operation> ListerOperationParCompte(long  idClient, long idCompte)
     {
@@ -71,7 +67,7 @@ public class OperationService implements IOperationService{
     }
 
 
-    public boolean verifierMontantAutorise(long idCompte, OperationDTO newOperation)
+    public boolean verifierMontantAutorise(long idCompte, OperationTraitement newOperation)
     {
         Compte compte = compteRepository.findById(idCompte).orElseThrow();
         return compte.getMinimumAutorise() <= compte.getSolde()-newOperation.getMontant();

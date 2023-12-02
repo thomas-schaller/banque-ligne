@@ -1,14 +1,13 @@
 package banque.services;
 
-import banque.dto.OperationDTO;
-import banque.modele.Compte;
+import banque.comportement.OperationTraitement;
 import banque.modele.Operation;
 
 import java.util.List;
 
 public interface IOperationService {
 
-    void applyOperation(final long idClient, final Long idCompte, OperationDTO newOperation);
+    void applyOperation(final long idClient, final Long idCompte, OperationTraitement newOperation);
 
     /**
      * Liste les operations d'un compte d'un client
@@ -18,6 +17,6 @@ public interface IOperationService {
      */
     List<Operation> ListerOperationParCompte(long  idClient, long idCompte);
 
-    boolean verifierMontantAutorise(long idCompte, OperationDTO operation);
+    boolean verifierMontantAutorise(long idCompte, OperationTraitement operation);
 
 }

@@ -10,7 +10,7 @@ public class Compte {
     private double minimumAutorise;
 
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private long identifiant;
     @ManyToOne
     private Devise devise;
